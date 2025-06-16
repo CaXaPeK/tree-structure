@@ -1,0 +1,9 @@
+.node-children {
+    margin-left: 20px;
+}
+
+.selectable:hover {
+    background-color: #c9ccef;
+    border-radius: 5px;
+    cursor: pointer;
+}

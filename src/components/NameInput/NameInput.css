@@ -1,0 +1,17 @@
+.name-input {
+    display: flex;
+    gap: 6px;
+    height: 24px;
+}
+
+.accept-button {
+    padding: 0;
+    width: 20px;
+    background-color: #ccefc9;
+}
+
+.cancel-button {
+    padding: 0;
+    width: 20px;
+    background-color: #efc9c9;
+}

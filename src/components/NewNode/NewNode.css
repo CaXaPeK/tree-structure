@@ -1,0 +1,14 @@
+.new-node-disabled {
+    opacity: 0;
+    height: 5px;
+}
+
+.new-node {
+    opacity: 0;
+    height: 5px;
+}
+
+.new-node:hover {
+    opacity: 0.5;
+    height: unset;
+}

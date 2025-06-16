@@ -2,7 +2,6 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
 }
 
 .logo {
@@ -39,4 +38,25 @@
 
 .read-the-docs {
   color: #888;
+}
+
+#application {
+  display: grid;
+  gap: 20px;
+}
+
+#controlButtons {
+  display: flex;
+  gap: 16px;
+}
+
+#addToRootNode {
+  opacity: 0.5;
+}
+
+#addToRootNode:hover {
+  opacity: 1;
+  background-color: #c9ccef;
+  border-radius: 5px;
+  cursor: pointer;
 }
