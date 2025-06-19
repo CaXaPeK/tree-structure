@@ -1,39 +1,23 @@
 import type {Node} from "../../types/nodeTree.ts";
 import './NodeContainer.css'
-import {useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {NameInput} from "../NameInput/NameInput.tsx";
 import {selectNode} from "../../store/uiSlice.ts";
-import {nanoid} from "@reduxjs/toolkit";
+import {addNode, removeNode, renameNode} from "../../store/treeSlice.ts";
 
-interface Props extends Node {
-    onEdit: (id: string, newName: string) => void;
-    onRemove: (id: string) => void;
-}
-
-export const NodeContainer = ({id, name, onEdit, onRemove}: Props) => {
+export const NodeContainer = (node: Node) => {
     const activeMode = useAppSelector(state => state.ui.mode);
     const selectedNodeId = useAppSelector(state => state.ui.selectedNodeId);
     const dispatch = useAppDispatch();
 
-    const handleEditChild = (childId: string, newName: string) =>
-        setChildNodes(prev =>
-            prev.map(n =>
-                n.id === childId ? {...n, name: newName} : n
-            )
-        );
-
-    const handleRemoveChild = (childId: string) =>
-        setChildNodes(prev => prev.filter(n => n.id !== childId));
-
-    const [childNodes, setChildNodes] = useState<Node[]>([]);
-
     return (
         <div>
-            {selectedNodeId === id && activeMode === 'EDIT' ?
+            {selectedNodeId === node.id && activeMode === 'EDIT' ?
                 <NameInput
-                    initialValue={name}
-                    onAccept={(newName: string) => onEdit?.(id, newName)}
+                    initialValue={node.name}
+                    onAccept={(newName: string) =>
+                        dispatch(renameNode({id: node.id, name: newName}))
+                    }
                 />
                 :
                 <span
@@ -41,33 +25,32 @@ export const NodeContainer = ({id, name, onEdit, onRemove}: Props) => {
                     onClick={
                         !selectedNodeId
                             ? activeMode === 'REMOVE'
-                                ? () => onRemove(id)
+                                ? () => dispatch(removeNode(node.id))
                                 : activeMode !== 'NONE'
-                                    ? () => dispatch(selectNode(id))
+                                    ? () => dispatch(selectNode(node.id))
                                     : undefined
                             : undefined
                     }
                 >
-                {name}
+                {node.name}
             </span>
             }
 
             <div className={'node-children'}>
-                {childNodes?.map((node) => (
+                {node.children?.map((child) => (
                     <NodeContainer
-                        id={node.id}
-                        name={node.name}
-                        onEdit={handleEditChild}
-                        onRemove={handleRemoveChild}
-                        key={id}
+                        id={child.id}
+                        name={child.name}
+                        children={child.children}
+                        key={child.id}
                     />
                 ))}
-                {selectedNodeId === id && activeMode === 'ADD' &&
+                {selectedNodeId === node.id && activeMode === 'ADD' &&
                     <NameInput
                         initialValue={''}
                         onAccept={(newName: string) =>
-                            setChildNodes((prev)=>
-                                [...prev, {id: nanoid(), name: newName}])}
+                            dispatch(addNode({parentId: node.id, name: newName}))
+                        }
                     />
                 }
             </div>

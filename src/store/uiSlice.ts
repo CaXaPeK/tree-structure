@@ -29,4 +29,3 @@ export const uiSlice = createSlice({
 })
 
 export const { setMode, clearMode, selectNode, deselectNode } = uiSlice.actions;
-export default uiSlice.reducer;

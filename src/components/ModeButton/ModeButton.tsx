@@ -1,6 +1,6 @@
 import {useAppDispatch, useAppSelector} from "../../hooks.ts";
 import {clearMode, setMode, type UiMode} from "../../store/uiSlice.ts";
-import './ControlButton.css'
+import './ModeButton.css'
 
 const label: Record<UiMode, string> = {
     ADD: 'Add',

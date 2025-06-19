@@ -1,28 +1,16 @@
 import './App.css'
-import type {Node} from "./types/nodeTree.ts";
-import {ModeButton} from "./components/ControlButton/ModeButton.tsx";
+import {ModeButton} from "./components/ModeButton/ModeButton.tsx";
 import {NodeContainer} from "./components/NodeContainer/NodeContainer.tsx";
-import {nanoid} from "@reduxjs/toolkit";
-import {useState} from "react";
 import {useAppDispatch, useAppSelector} from "./hooks.ts";
 import {selectNode} from "./store/uiSlice.ts";
 import {NameInput} from "./components/NameInput/NameInput.tsx";
+import {addNode, resetTree} from "./store/treeSlice.ts";
 
 function App() {
-    const [nodes, setNodes] = useState<Node[]>([]);
     const activeMode = useAppSelector(state => state.ui.mode);
     const selectedNodeId = useAppSelector(state => state.ui.selectedNodeId);
+    const rootChildren = useAppSelector(state => state.tree.root);
     const dispatch = useAppDispatch();
-
-    const handleEditNode = (childId: string, newName: string) =>
-        setNodes(prev =>
-            prev.map(n =>
-                n.id === childId ? {...n, name: newName} : n
-            )
-        );
-
-    const handleRemoveNode = (childId: string) =>
-        setNodes(prev => prev.filter(n => n.id !== childId));
 
     return (
         <div id={'application'}>
@@ -30,21 +18,19 @@ function App() {
                 <ModeButton mode={'ADD'}/>
                 <ModeButton mode={'EDIT'}/>
                 <ModeButton mode={'REMOVE'}/>
-                {/*<ControlButton mode={'none'}/>*/}
                 <button
-                    onClick={() => setNodes([])}
+                    onClick={() => dispatch(resetTree())}
                     disabled={!!selectedNodeId}
                 >Reset</button>
             </div>
 
             <div>
-                {nodes.map((node, index) => (
+                {rootChildren.map((node) => (
                     <NodeContainer
                         id={node.id}
                         name={node.name}
-                        onEdit={handleEditNode}
-                        onRemove={handleRemoveNode}
-                        key={index}
+                        children={node.children}
+                        key={node.id}
                     />
                 ))}
                 {activeMode === 'ADD' && !selectedNodeId &&
@@ -58,9 +44,9 @@ function App() {
                 {selectedNodeId === 'root' && activeMode === 'ADD' &&
                     <NameInput
                         initialValue={''}
-                        onAccept={(newName: string) =>
-                            setNodes((prev)=>
-                                [...prev, {id: nanoid(), name: newName}])}
+                        onAccept={(newName) =>
+                            dispatch(addNode({parentId: null, name: newName}))
+                        }
                     />
                 }
             </div>
